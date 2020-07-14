@@ -1,5 +1,5 @@
 datadog:
-  apiKeyExistingSecret: dd
+  apiKeyExistingSecret: datadog-keys
   apm:
     enabled: true
   logs:
@@ -19,28 +19,22 @@ datadog:
   env:
     - name: DD_ENV
       value: "lab"
+    - name: DD_CLUSTER_NAME
+      value: alexf-lab
+    - name: DD_HOSTNAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
     - name: DD_KUBELET_TLS_VERIFY
       value: false
-    - name: DD_LOGS_CONFIG_PROCESSING_RULES
-      value: >-
-        [{
-            "type": "mask_sequences",
-            "name": "Id redaction",
-            "replace_placeholder": "Id\\\":\\\"[Id REDACTED]",
-            "pattern" : "(?:(Id\\\":\\\"[^\\\"]+))"
-        }]
 agents:
   enabled: true
   rbac:
     create: true
-  podAnnotations:
-    sidecar.istio.io/inject: "false"
 clusterAgent:
   enabled: true
   rbac:
     create: true
-  podAnnotations:
-    sidecar.istio.io/inject: "false"
   confd:
     kube_controller_manager.yaml: |-
       cluster_check: true
